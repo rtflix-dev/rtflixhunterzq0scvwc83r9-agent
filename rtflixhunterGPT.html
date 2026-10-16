@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>rtflixhunter — GPT</title>
+<style>
+:root{--bg:#0a0508;--card:#140a0f;--line:#3a1420;--txt:#fff;--mut:#b9a3ab;--acc:#ff3358;--acc2:#c3122f;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;background-image:radial-gradient(60% 40% at 50% 0%,#4a0f1f 0%,transparent 70%)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:10px 0;background:var(--bg)}
+.bar{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:18px;padding:10px 14px;background:#0d0609}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}.logo b{color:var(--acc)}
+.menu-btn{background:none;border:1px solid var(--line);color:var(--txt);border-radius:12px;width:44px;height:40px;font-size:20px;cursor:pointer}
+nav{position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);z-index:60;display:flex;flex-direction:column;gap:6px;padding:calc(18px + env(safe-area-inset-top,0px)) 16px 18px;background:#0a0508;border-left:1px solid var(--acc2);transform:translateX(100%);transition:transform .2s;visibility:hidden}
+nav.open{transform:none;visibility:visible}
+nav a{padding:14px 16px;border-radius:14px;color:var(--mut);font-size:18px}nav a:hover{background:#1a0b11;color:var(--txt)}
+nav .xb{align-self:flex-end;margin-bottom:12px}
+@media(min-width:760px){.menu-btn{display:none}nav{position:static;width:auto;flex-direction:row;transform:none;visibility:visible;padding:0;background:none;border:0}nav a{font-size:15px;padding:8px 12px}.bar{gap:16px}.bar nav{order:2}}
+.hero{text-align:center;padding:56px 0 40px}
+.badge{display:inline-block;border:1px solid var(--acc2);border-radius:999px;padding:10px 18px;font-size:14px;background:#12070b;margin-bottom:26px}
+h1{font-size:clamp(30px,9vw,80px);line-height:1;margin:0;letter-spacing:-2px}
+h1 span{color:var(--acc)}
+.tag{font-size:clamp(24px,6vw,40px);font-weight:800;margin:14px 0 8px}.tag em{font-style:normal;color:var(--acc)}
+.sub{color:var(--mut);font-size:18px;max-width:560px;margin:0 auto 26px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:30px}
+.chips span{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:10px 16px;font-size:15px}
+.btn{display:block;max-width:560px;margin:0 auto 12px;padding:18px;border-radius:18px;font-weight:700;font-size:19px;background:linear-gradient(180deg,#ff4a68,#ff2548);box-shadow:0 8px 30px rgba(255,51,88,.35)}
+.btn.ghost{background:#0d0609;border:1px solid var(--line);box-shadow:none;font-size:17px}
+section{padding:44px 0}
+.eyebrow{color:var(--acc);font-size:13px;letter-spacing:.18em;font-weight:700;text-transform:uppercase}
+h2{font-size:clamp(26px,6vw,40px);margin:8px 0 8px;line-height:1.15}
+.lead{color:var(--mut);margin:0 0 24px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:20px}
+.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--mut);font-size:15px}
+.pill{display:inline-block;font-size:11px;font-weight:700;background:var(--acc);border-radius:999px;padding:2px 9px;margin-bottom:10px}
+.ba .card.after{border-color:var(--acc2);box-shadow:0 0 30px rgba(255,51,88,.15)}
+.q{color:var(--mut);font-style:italic;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;margin-top:20px}
+.stats b{display:block;font-size:clamp(24px,6vw,38px);color:var(--acc)}.stats span{color:var(--mut);font-size:13px}
+.cta{text-align:center;border:1px solid var(--line);border-radius:24px;padding:40px 20px;background:linear-gradient(180deg,#240812,#0d0609)}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mut);font-size:14px}
+.cols{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:20px}
+.cols b{color:var(--txt);display:block;margin-bottom:6px}.cols a{display:block;padding:3px 0}
+#cookie{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid var(--line);background:#0d0609;border-radius:18px;padding:14px 16px;font-size:14px;color:var(--mut)}
+#cookie button{background:var(--acc2);color:#fff;border:0;border-radius:12px;padding:10px 22px;font-weight:700;cursor:pointer}
+#cookie[hidden]{display:none}
+#chat{display:none;flex-direction:column;height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));max-width:760px;margin:0 auto;padding:0 14px}
+body.chat-mode>header,body.chat-mode>main,body.chat-mode>footer,body.chat-mode #cookie,body.auth-mode>header,body.auth-mode>main,body.auth-mode>footer,body.auth-mode #cookie{display:none}
+body.chat-mode #chat{display:flex}
+#auth{display:none;min-height:100dvh;align-items:center;justify-content:center;padding:18px}
+body.auth-mode #auth{display:flex}
+.authbox{width:100%;max-width:420px;border:1px solid var(--line);border-radius:24px;background:var(--card);padding:28px 22px;text-align:center}
+.authbox input,#q{width:100%;background:#0a0508;border:1px solid var(--line);border-radius:14px;color:var(--txt);padding:14px;font:inherit;font-size:16px;margin:12px 0;outline:0}
+.authbox .btn{width:100%;border:0;cursor:pointer;font-family:inherit;margin:0 0 14px}
+.authbox a{color:var(--mut);font-size:14px}
+.cbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.mini{background:none;border:1px solid var(--line);color:var(--txt);border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:16px}
+.av{width:42px;height:42px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+#scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50}
+#sb{position:fixed;top:0;bottom:0;left:0;width:min(86vw,340px);z-index:60;background:#0a0508;border-right:1px solid var(--acc2);padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .2s;overflow-y:auto}
+#chat.sb-open #sb{transform:none}#chat.sb-open #scrim{display:block}
+.sbtop,.hist,.plan{display:flex;justify-content:space-between;align-items:center}
+.newbtn{width:100%;border:0;cursor:pointer;font-family:inherit;margin:16px 0 4px;padding:15px;font-size:17px}
+.hist{margin-top:8px}
+#list{flex:1;min-height:90px;margin-top:8px}
+.ci{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:14px;padding:12px;margin-bottom:8px;cursor:pointer;font:inherit}
+.ci.on{border-color:var(--acc2);background:#2a0f18}
+.ci b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ci small{color:var(--mut)}
+.plan{border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:12px 0;color:var(--mut);font-size:14px}
+.plan button{background:none;border:0;color:var(--acc);font-weight:700;font:inherit;cursor:pointer}
+.ucard{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--card);margin-bottom:6px}
+.ucard small{color:var(--mut)}
+.item{display:block;width:100%;background:none;border:0;text-align:left;font:inherit;font-size:17px;padding:12px 8px;cursor:pointer;color:var(--txt)}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d0c13;border:1px solid var(--acc2);border-radius:12px;padding:10px 16px;z-index:80;font-size:14px;display:none;white-space:nowrap}
+#msgs{flex:1;overflow-y:auto;padding:18px 2px;display:flex;flex-direction:column;gap:20px}
+#empty{margin:auto;text-align:center;width:100%}
+#empty h1{font-size:clamp(34px,10vw,56px)}
+.sug{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px;text-align:left}
+.sug button{border:1px solid var(--line);background:var(--card);color:var(--txt);border-radius:16px;padding:14px;font:inherit;font-size:14px;cursor:pointer;text-align:left}
+.sug b{display:block;margin-bottom:3px}.sug span{color:var(--mut);font-size:13px}
+.cbar{position:relative}
+.ttl{text-align:center;min-width:0}.ttl b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:52vw}.ttl small{color:var(--mut);font-size:12px}
+#pmenu,#mmenu{display:none;background:#0d0609;border:1px solid var(--acc2);border-radius:18px;padding:6px;z-index:25}
+#pmenu{position:absolute;right:0;top:calc(100% + 6px);width:230px}
+#mmenu{position:absolute;left:8px;right:8px;bottom:calc(100% + 8px)}
+#pmenu.open,#mmenu.open{display:block}
+#pmenu button,#mmenu button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--txt);font:inherit;padding:11px 12px;border-radius:12px;cursor:pointer}
+#mmenu button.on{background:#2a0f18}#mmenu button span{display:block;color:var(--mut);font-size:12px}
+.row{display:flex;gap:10px;align-items:flex-start}
+.row.u{justify-content:flex-end}
+.row.u .bub{background:var(--acc2);border-radius:18px 18px 4px 18px;padding:11px 15px;max-width:86%;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px}
+.row.a .av{width:30px;height:30px;font-size:13px;margin-top:2px}
+.row.a .bub{flex:1;min-width:0;font-size:15px;line-height:1.65;overflow-wrap:anywhere}
+.bub p{margin:0 0 10px}.bub h4{margin:14px 0 6px;font-size:16px}
+.bub ul,.bub ol{margin:0 0 10px;padding-left:22px}.bub li{margin:3px 0}
+.bub hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+.bub code{background:#24101a;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:13px}
+.cb{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:10px 0;background:#0c0509}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;background:#1a0b11;font-size:12px;color:var(--mut)}
+.ch button{background:none;border:0;color:var(--acc);font:inherit;font-weight:700;cursor:pointer}
+.cb pre{margin:0;padding:12px;overflow-x:auto}.cb pre code{background:none;border:0;padding:0;font-size:13px;line-height:1.5}
+.tw2{overflow-x:auto;margin:10px 0}.tw2 table{min-width:0}
+.acts{display:flex;gap:8px;margin-top:6px}
+.acts button{background:none;border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer}
+.composer{position:relative;border:1px solid var(--acc2);border-radius:22px;background:#0d0609;padding:12px 14px;margin:8px 0 4px}
+.composer textarea{width:100%;background:none;border:0;outline:0;color:var(--txt);font:inherit;font-size:16px;resize:none;max-height:140px}
+.crow{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+#modeBtn{background:#0a0508;color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+#send{width:46px;height:46px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:22px;font-weight:700;cursor:pointer}
+.foot{text-align:center;color:var(--mut);font-size:11px;margin-bottom:8px}
+.tw{overflow-x:auto;margin-top:20px}table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:13px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:15px}th{color:var(--acc)}td:first-child{color:var(--mut)}
+.price{font-size:36px;font-weight:800;margin:8px 0}.price small{font-size:15px;color:var(--mut);font-weight:400}
+.card ul{margin:12px 0 0;padding-left:18px;color:var(--mut);font-size:15px}.card .btn{margin:18px 0 0;font-size:16px;padding:14px}
+details{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:16px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700}details p{color:var(--mut);margin:10px 0 0}
+.tabs{display:flex;gap:6px;background:#0a0508;border:1px solid var(--line);border-radius:14px;padding:4px;margin:18px 0 4px}
+.tabs button{flex:1;background:none;border:0;color:var(--mut);font:inherit;font-weight:700;padding:11px;border-radius:10px;cursor:pointer}
+.tabs button.on{background:var(--acc2);color:#fff}
+.err{color:#ff7a8e;font-size:14px;min-height:20px;margin:0 0 10px}.note{color:var(--mut);font-size:12px;margin:0 0 12px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="bar"><a class="logo" href="#">RTFLIX<b>HUNTER</b></a>
+    <nav id="nav"><button class="menu-btn xb" id="xb" aria-label="Close">✕</button><a href="#">Home</a><a href="#features">Features</a><a href="#compare">Compare</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a><a href="#login">Login</a></nav>
+    <button class="menu-btn" id="mb" aria-label="Menu">☰</button></div>
+</div></header>
+
+<main class="wrap">
+  <div class="hero">
+    <div class="badge">🛡️ Private AI assistant, members-only access</div>
+    <h1>RTFLIX<span>HUNTER</span></h1>
+    <div class="tag">AI that gets <em>straight to it.</em></div>
+    <p class="sub">Fast, direct, results-first answers. Code, research, writing and analysis in one private workspace.</p>
+    <div class="chips"><span>🧠 Multiple models</span><span>🌐 Web</span><span>💭 Reasoning</span><span>📄 Documents</span><span>🖼️ Images</span><span>🔎 Research</span></div>
+    <a class="btn" href="#chat">Create account</a>
+    <a class="btn ghost" href="#demo">▶ Watch demo</a>
+  </div>
+
+  <section id="demo" class="ba">
+    <div class="eyebrow">Before / After</div>
+    <h2>Vague reply vs useful reply</h2>
+    <p class="lead">Same question. Different result.</p>
+    <div class="grid">
+      <div class="card"><span class="pill" style="background:#444">Before</span><div class="q">“I’d like to build this — help me do it.”</div><p>Could you clarify what you mean? Please rephrase your question.</p></div>
+      <div class="card after"><span class="pill">After</span><div class="q">“I’d like to build this — help me do it.”</div><p>Sure. Here’s a 4-step plan, the stack I’d use, and starter code to get you going today.</p></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="eyebrow">What’s included</div>
+    <h2>Everything you need, nothing you don’t</h2>
+    <p class="lead">Direct, fast, results-first AI.</p>
+    <div class="grid">
+      <div class="card"><span class="pill">Exclusive</span><h3>Direct answers</h3><p>Clear, fast, actionable replies — no useless detours.</p></div>
+      <div class="card"><span class="pill">New</span><h3>Open-source research</h3><p>Collect and structure public information efficiently.</p></div>
+      <div class="card"><h3>Recent info</h3><p>Work with up-to-date data to make better decisions.</p></div>
+      <div class="card"><h3>Instant generation</h3><p>Text, ideas, scripts and strategies in seconds.</p></div>
+      <div class="card"><h3>Custom modes</h3><p>Adapt tone and style: Direct, Creative or Developer.</p></div>
+      <div class="card"><h3>Available 24/7</h3><p>Continuous access, no waiting.</p></div>
+    </div>
+  </section>
+
+  <section id="use">
+    <div class="eyebrow">Use cases</div>
+    <h2>What you can actually do</h2>
+    <p class="lead">One tool. Immediate results.</p>
+    <div class="grid">
+      <div class="card"><h3>Research</h3><p>Find and structure public info faster than ever.</p></div>
+      <div class="card"><h3>Writing</h3><p>Drafts, copy and scripts, ready to use.</p></div>
+      <div class="card"><h3>Fast execution</h3><p>Code, scripts, solutions: idea to action instantly.</p></div>
+      <div class="card"><h3>Mental edge</h3><p>Find angles, strategies and opportunities others miss.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Performance</div>
+    <h2>Fast replies, minimal latency</h2>
+    <p class="lead">Stack optimized for real use: smooth generation, responsive UI, continuous experience.</p>
+  </section>
+
+  <section id="proof">
+    <div class="eyebrow">Social proof</div>
+    <h2>They’re already using it</h2>
+    <!-- SAMPLE testimonials and numbers: replace with real ones before launch -->
+    <div class="grid" style="margin-top:20px">
+      <div class="card"><p>“Direct answers, no detours. I save huge time on my projects.”</p><p style="margin-top:10px;color:#fff">— Yanis</p></div>
+      <div class="card"><p>“Speed and clarity beat what I used before.”</p><p style="margin-top:10px;color:#fff">— Léa, Freelance</p></div>
+      <div class="card"><p>“Clean UI, smooth experience, pro-grade output.”</p><p style="margin-top:10px;color:#fff">— Sam, Content creator</p></div>
+    </div>
+    <div class="stats"><div><b>12 000+</b><span>Requests / day</span></div><div><b>99%</b><span>Uptime</span></div><div><b>900+</b><span>Members</span></div></div>
+  </section>
+
+  <section id="how">
+    <div class="eyebrow">How does it work?</div>
+    <h2>Up and running in 4 steps</h2>
+    <div class="grid" style="margin-top:20px">
+      <div class="card"><h3>1. Choose a plan</h3><p>Starter or Unlimited, monthly, no commitment.</p></div>
+      <div class="card"><h3>2. Pay</h3><p>Your account is upgraded once payment is confirmed.</p></div>
+      <div class="card"><h3>3. Sign in</h3><p>Open the client area with your username.</p></div>
+      <div class="card"><h3>4. Use it</h3><p>Access stays active while your plan is valid.</p></div>
+    </div>
+    <a class="btn ghost" style="margin-top:20px" href="#login">Member login</a>
+  </section>
+
+  <section id="compare">
+    <div class="eyebrow">Compare</div>
+    <h2>Pick the plan that fits</h2>
+    <!-- Placeholder plan details: edit to match your real offers -->
+    <div class="tw"><table>
+      <tr><th>Feature</th><th>Free</th><th>Starter</th><th>Unlimited</th></tr>
+      <tr><td>Daily messages</td><td>20</td><td>200</td><td>Unlimited</td></tr>
+      <tr><td>Conversation modes</td><td>Direct</td><td>3 modes</td><td>3 modes</td></tr>
+      <tr><td>Web research</td><td>—</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Documents</td><td>—</td><td>✓</td><td>✓</td></tr>
+      <tr><td>History</td><td>7 days</td><td>30 days</td><td>Unlimited</td></tr>
+      <tr><td>Priority support</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Price</td><td>€0</td><td>€9.99/mo</td><td>€19.99/mo</td></tr>
+    </table></div>
+  </section>
+
+  <section id="pricing">
+    <div class="eyebrow">Pricing</div>
+    <h2>Simple, transparent pricing</h2>
+    <p class="lead">Monthly, no commitment. Cancel any time.</p>
+    <div class="grid">
+      <div class="card"><h3>Free</h3><div class="price">€0</div><ul><li>20 messages / day</li><li>Direct mode</li><li>7-day history</li></ul><a class="btn ghost" href="#chat">Try it free</a></div>
+      <div class="card after" style="border-color:var(--acc2)"><span class="pill">Popular</span><h3>Starter</h3><div class="price">€9.99<small>/mo</small></div><ul><li>200 messages / day</li><li>3 modes, web research</li><li>Documents, 30-day history</li></ul><a class="btn" href="#contact">Choose Starter</a></div>
+      <div class="card"><h3>Unlimited</h3><div class="price">€19.99<small>/mo</small></div><ul><li>Unlimited messages</li><li>Everything in Starter</li><li>Priority support</li></ul><a class="btn ghost" href="#contact">Choose Unlimited</a></div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="eyebrow">FAQ</div>
+    <h2>Frequently asked questions</h2>
+    <div style="margin-top:20px">
+      <details><summary>Does it answer everything?</summary><p>It answers the vast majority of questions directly. For a few sensitive topics, such as illegal activity or private personal data, it will decline.</p></details>
+      <details><summary>How do I activate access after payment?</summary><p>Contact us with your username and we upgrade your account.</p></details>
+      <details><summary>Is there a daily request limit?</summary><p>The Free and Starter plans have daily limits. Unlimited has none.</p></details>
+      <details><summary>Where is my chat history stored?</summary><p>On your device. See the Privacy page for details.</p></details>
+      <details><summary>Can I cancel any time?</summary><p>Yes. Plans are monthly with no commitment.</p></details>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="eyebrow">Support</div>
+    <h2>Contact us</h2>
+    <p class="lead">Technical support, business requests and privacy matters. Typical response: 5 min to 3 h.</p>
+    <!-- Replace the placeholder email and links with your real ones -->
+    <div class="grid">
+      <div class="card"><h3>Email</h3><p>Detailed requests and formal follow-up.</p><a class="btn ghost" href="mailto:hello@yourdomain.com">Send an email</a></div>
+      <div class="card"><h3>Telegram</h3><p>Direct channel for technical support and urgent requests.</p><a class="btn ghost" href="#contact">Open Telegram</a></div>
+      <div class="card"><h3>Community</h3><p>Announcements, support and feedback.</p><a class="btn ghost" href="#contact">Join Discord</a></div>
+    </div>
+    <p class="lead" style="margin-top:18px">Tip: include your account username and a short message to speed things up.</p>
+  </section>
+
+  <section id="cta"><div class="cta">
+    <h2>Ready to get started?</h2>
+    <p class="lead">Private access, available any time.</p>
+    <a class="btn" href="#chat">Get access now</a>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <div class="logo">RTFLIX<b>HUNTER</b></div><div>Artificial intelligence, simplified.</div>
+  <div class="cols">
+    <div><b>Navigation</b><a href="#features">Features</a><a href="#compare">Compare</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a></div>
+    <div><b>Legal</b><a href="#">Legal notice</a><a href="#">Terms</a><a href="#">Privacy</a></div>
+    <div><b>Support</b><a href="#">Discord</a><a href="#">Telegram</a></div>
+  </div>
+  <p>© 2026 rtflixhunter. All rights reserved.</p>
+</div></footer>
+
+<div id="auth"><div class="authbox">
+  <div class="logo">rtflix<b>hunter</b></div>
+  <div class="tabs"><button id="t-in">Sign in</button><button id="t-up" class="on">Create account</button></div>
+  <input id="uname" maxlength="24" placeholder="Username" autocomplete="username">
+  <input id="email" type="email" placeholder="Email" autocomplete="email" style="display:none">
+  <input id="pw" type="password" placeholder="Password" autocomplete="new-password">
+  <input id="pw2" type="password" placeholder="Confirm password" autocomplete="new-password">
+  <div class="err" id="err"></div>
+  <button class="btn" id="enter">Create account</button>
+  <p class="note" id="anote">Accounts are stored on this device only.</p>
+  <a href="#">← Back to site</a>
+</div></div>
+<div id="chat">
+  <div id="scrim"></div>
+  <aside id="sb">
+    <div class="sbtop"><div class="logo">RTFLIX<b>HUNTER</b></div><button class="mini" id="closeSb" aria-label="Close">✕</button></div>
+    <button class="btn newbtn" id="newchat">＋ New chat</button>
+    <input id="q" placeholder="Search…">
+    <div class="hist"><span class="eyebrow">History</span><button class="mini" id="clr" aria-label="Delete history">🗑</button></div>
+    <div id="list"></div>
+    <div class="plan"><span>Discovery version</span><button id="up">Upgrade</button></div>
+    <div class="ucard"><div class="av" id="av">R</div><div><b id="un">user</b><br><small>Discovery</small></div></div>
+    <button class="item" id="sub">💳 Subscription</button>
+    <button class="item" id="set">⚙️ Settings</button>
+    <button class="item" id="logout">↪ Log out</button>
+  </aside>
+  <div class="cbar"><button class="mini" id="openSb" aria-label="Menu">☰</button><div class="ttl"><b id="ttl">New chat</b><small id="mbadge">General</small></div><button class="mini" id="more" aria-label="More">⋯</button>
+    <div id="pmenu"><button id="pm-new">＋ New chat</button><button id="pm-copy">⧉ Copy conversation</button><button id="pm-del">🗑 Delete this chat</button><button id="pm-home">← Back to site</button></div>
+  </div>
+  <div id="msgs"><div id="empty"><h1>RTFLIX<span>HUNTER</span></h1><div class="tag">How can I help today?</div>
+    <div class="sug">
+      <button data-p="Help me plan and build a small web project, step by step."><b>Build something</b><span>Plan a project step by step</span></button>
+      <button data-p="Explain a topic clearly with examples. Ask me which topic."><b>Learn a topic</b><span>Clear explanations</span></button>
+      <button data-p="Help me write a professional message or document."><b>Write something</b><span>Emails, posts, documents</span></button>
+      <button data-p="Help me debug my code. I’ll paste it next."><b>Fix my code</b><span>Debug and improve</span></button>
+    </div></div></div>
+  <div class="composer">
+    <div id="mmenu"></div>
+    <textarea id="inp" rows="1" placeholder="Message rtflixhunter…"></textarea>
+    <div class="crow"><button id="modeBtn"></button><button id="send" aria-label="Send">↑</button></div>
+  </div>
+  <div class="foot">AI can make mistakes. Check important information.</div>
+</div>
+<div id="toast"></div>
+<div id="cookie" hidden><span>Local storage for preferences (no targeted ads).</span><button id="ok">OK</button></div>
+<script>window.RH={url:'',key:''};/* paste your Supabase Project URL and anon (public) key here */</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+document.getElementById('mb').onclick=function(){document.getElementById('nav').classList.toggle('open')};
+document.getElementById('xb').onclick=function(){document.getElementById('nav').classList.remove('open')};
+document.querySelectorAll('#nav a').forEach(function(a){a.onclick=function(){document.getElementById('nav').classList.remove('open')}});
+var c=document.getElementById('cookie'),seen=false;
+try{seen=localStorage.getItem('ck')==='1'}catch(e){}
+if(!seen)c.hidden=false;
+document.getElementById('ok').onclick=function(){c.hidden=true;try{localStorage.setItem('ck','1')}catch(e){}};
+var $=function(i){return document.getElementById(i)};
+function ld(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var SB=null;try{if(window.supabase&&window.RH&&window.RH.url&&window.RH.key)SB=window.supabase.createClient(window.RH.url,window.RH.key)}catch(e){}
+var ukey='',user=SB?null:ld('rh_user',null),convs=[],cur=null,hist=[],busy=false,armed=0,ctrl=null,stopped=false;
+var msgs=$('msgs'),inp=$('inp'),sendB=$('send'),chat=$('chat'),emptyHTML=msgs.innerHTML;
+var SYS='You are rtflixhunter AI, the assistant inside the rtflixhunter app. You help with any topic: coding, writing, research, business, study, daily life and casual conversation. Reply in the language the user writes in (including Moroccan Darija). Format answers professionally and clearly: a short direct opening, headings only for longer answers, bullet or numbered lists for steps, tables for comparisons, and fenced code blocks with a language tag for code. Stay organized and avoid filler. If asked which model or company is behind you, say you are rtflixhunter AI and that you can’t share what runs underneath. Never claim to be human. ';
+var MODES={
+ general:{n:'General',d:'Balanced answers on any topic',p:'Be a helpful general-purpose assistant.'},
+ direct:{n:'Direct',d:'Short and to the point',p:'Lead with the answer and keep it brief.'},
+ dev:{n:'Developer',d:'Code, debugging, architecture',p:'Act as a senior software engineer. Give working code in fenced blocks with a language tag, then a short explanation and any edge cases.'},
+ research:{n:'Research',d:'Structured analysis',p:'Act as a research analyst. Use headings, key points, trade-offs and a short conclusion.'},
+ creative:{n:'Creative',d:'Ideas, copy, stories',p:'Be imaginative and expressive. Offer several distinct options when useful.'}};
+var curMode=ld('rh_mode','general');if(!MODES[curMode])curMode='general';
+
+function toast(t){var x=$('toast');x.textContent=t;x.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(function(){x.style.display='none'},2000)}
+function copyText(t,cb){
+  function fb(){var x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');cb()}catch(e){}x.remove()}
+  try{navigator.clipboard.writeText(t).then(cb,fb)}catch(e){fb()}}
+
+/* mini markdown renderer: everything is escaped first, so model output can't inject HTML */
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function inl(t){return esc(t).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*([^*\s][^*]*)\*/g,'$1<em>$2</em>')}
+function blocks(t){
+  var L=t.split('\n'),h='',lt='',i=0,m;
+  function end(){if(lt){h+='</'+lt+'>';lt=''}}
+  function cells(r){return r.trim().replace(/^\||\|$/g,'').split('|').map(function(c){return c.trim()})}
+  while(i<L.length){
+    var l=L[i];
+    if(/^\s*\|.*\|\s*$/.test(l)&&i+1<L.length&&/^\s*\|[\s:|-]+\|\s*$/.test(L[i+1])){
+      end();var rows=[];while(i<L.length&&/^\s*\|.*\|\s*$/.test(L[i])){rows.push(L[i]);i++}
+      h+='<div class="tw2"><table><tr>'+cells(rows[0]).map(function(c){return'<th>'+inl(c)+'</th>'}).join('')+'</tr>';
+      rows.slice(2).forEach(function(r){h+='<tr>'+cells(r).map(function(c){return'<td>'+inl(c)+'</td>'}).join('')+'</tr>'});
+      h+='</table></div>';continue}
+    if(/^\s*-{3,}\s*$/.test(l)){end();h+='<hr>'}
+    else if(m=l.match(/^#{1,4}\s+(.*)/)){end();h+='<h4>'+inl(m[1])+'</h4>'}
+    else if(m=l.match(/^\s*[-*]\s+(.*)/)){if(lt!=='ul'){end();h+='<ul>';lt='ul'}h+='<li>'+inl(m[1])+'</li>'}
+    else if(m=l.match(/^\s*\d+[.)]\s+(.*)/)){if(lt!=='ol'){end();h+='<ol>';lt='ol'}h+='<li>'+inl(m[1])+'</li>'}
+    else if(l.trim()===''){end()}
+    else{end();h+='<p>'+inl(l)+'</p>'}
+    i++}
+  end();return h}
+function md(src){
+  return src.split('```').map(function(seg,i){
+    if(i%2){var nl=seg.indexOf('\n'),lang=nl>-1?seg.slice(0,nl).trim():'',code=nl>-1?seg.slice(nl+1):seg;
+      return'<div class="cb"><div class="ch"><span>'+esc(lang||'code')+'</span><button class="cp">Copy</button></div><pre><code>'+esc(code.replace(/\n$/,''))+'</code></pre></div>'}
+    return blocks(seg)}).join('')}
+
+function route(){var h=location.hash,c=h==='#chat'||h==='#login';document.body.classList.toggle('auth-mode',c&&!user);document.body.classList.toggle('chat-mode',c&&!!user);if(c&&!user)setTab(h==='#login'?'in':'up');window.scrollTo(0,0)}
+function save(){sv('rh_c_'+ukey,convs)}
+function openSb(o){chat.classList.toggle('sb-open',o)}
+function closeMenus(){$('mmenu').classList.remove('open');$('pmenu').classList.remove('open')}
+
+function addRow(role,text){
+  var r=document.createElement('div');r.className='row '+(role==='user'?'u':'a');
+  if(role!=='user'){var a=document.createElement('div');a.className='av';a.textContent='R';r.appendChild(a)}
+  var b=document.createElement('div');b.className='bub';
+  if(role==='user')b.textContent=text;else b.innerHTML=md(text);
+  r.appendChild(b);msgs.appendChild(r);msgs.scrollTop=msgs.scrollHeight;return b}
+function addActs(b){
+  msgs.querySelectorAll('.acts').forEach(function(x){x.remove()});
+  var d=document.createElement('div');d.className='acts';
+  d.innerHTML='<button data-a="copy">Copy</button><button data-a="regen">↻ Regenerate</button>';b.appendChild(d)}
+function renderAll(){
+  msgs.textContent='';
+  hist.forEach(function(m){var b=addRow(m.role,m.content);if(m.role==='assistant')b.dataset.raw=m.content});
+  var last=msgs.querySelector('.row:last-child.a .bub');if(last)addActs(last)}
+
+function renderList(){
+  var l=$('list'),q=$('q').value.toLowerCase();l.textContent='';
+  convs.filter(function(c){return c.title.toLowerCase().indexOf(q)>-1}).forEach(function(c){
+    var b=document.createElement('button');b.className='ci'+(cur&&cur.id===c.id?' on':'');
+    var t=document.createElement('b');t.textContent=c.title;
+    var s=document.createElement('small');s.textContent=new Date(c.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    b.appendChild(t);b.appendChild(s);b.onclick=function(){openConv(c.id)};l.appendChild(b)})}
+function newChat(){cur=null;hist=[];msgs.innerHTML=emptyHTML;$('ttl').textContent='New chat';openSb(false);closeMenus();renderList()}
+function openConv(id){
+  var c=convs.find(function(x){return x.id===id});if(!c)return;
+  cur=c;hist=c.msgs.slice();renderAll();$('ttl').textContent=c.title;openSb(false);renderList()}
+function setUser(u,key){
+  user=u;ukey=key||u;
+  if(u){if(!SB)sv('rh_user',u);convs=ld('rh_c_'+ukey,[]);$('un').textContent=u;$('av').textContent=u.charAt(0).toUpperCase();newChat()}
+  else{try{localStorage.removeItem('rh_user')}catch(e){}convs=[]}
+  route()}
+
+function setMode(k){
+  curMode=k;sv('rh_mode',k);$('modeBtn').textContent=MODES[k].n+' ▾';$('mbadge').textContent=MODES[k].n+' mode';
+  $('mmenu').querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.k===k)})}
+(function(){var m=$('mmenu');Object.keys(MODES).forEach(function(k){
+  var b=document.createElement('button');b.dataset.k=k;b.innerHTML='<b>'+MODES[k].n+'</b><span>'+MODES[k].d+'</span>';
+  b.onclick=function(){setMode(k);closeMenus()};m.appendChild(b)});setMode(curMode)})();
+
+function finish(out,txt){
+  out.innerHTML=md(txt);out.dataset.raw=txt;hist.push({role:'assistant',content:txt});
+  if(!cur){cur={id:Date.now(),t:Date.now(),title:hist[0].content.slice(0,40),msgs:[]};convs.unshift(cur)}
+  cur.msgs=hist.slice();save();renderList();$('ttl').textContent=cur.title;addActs(out)}
+async function apiChat(signal){
+  var h={'Content-Type':'application/json'};
+  if(SB){var ss=await SB.auth.getSession(),tk=ss.data&&ss.data.session&&ss.data.session.access_token;if(tk)h.Authorization='Bearer '+tk}
+  var res=await fetch('/api/chat',{method:'POST',headers:h,signal:signal,body:JSON.stringify({mode:curMode,messages:hist.map(function(m){return{role:m.role,content:m.content}})})});
+  var d=await res.json().catch(function(){return{}});
+  if(!res.ok)throw{code:res.status===429?'rate_limited':res.status===401?'auth':'api',message:d.error||''};
+  return d}
+async function go(txt){
+  if(busy){stopped=true;if(ctrl)ctrl.abort();return}
+  var t=(typeof txt==='string'?txt:inp.value).trim();if(!t)return;
+  busy=true;stopped=false;sendB.textContent='■';inp.value='';inp.style.height='auto';
+  var e=$('empty');if(e)e.remove();
+  addRow('user',t);hist.push({role:'user',content:t});
+  var out=addRow('assistant','…'),acc='';
+  try{
+    var sample=window.claude&&window.claude.use?await window.claude.use('sample'):null;
+    ctrl=new AbortController();var r;
+    if(sample){
+      var input=hist.map(function(m){return{role:m.role,content:m.content}});
+      input[input.length-1].content=SYS+MODES[curMode].p+'\n\nUser message:\n'+t;
+      r=await sample(input,{cache:false,signal:ctrl.signal,onText:function(x){acc=x.text;out.innerHTML=md(acc);msgs.scrollTop=msgs.scrollHeight}});
+    }else{r=await apiChat(ctrl.signal)}
+    finish(out,r.text);
+  }catch(err){
+    if(stopped&&acc){finish(out,acc)}
+    else{hist.pop();out.textContent=stopped?'Stopped.':err&&err.code==='not_granted'?'Access was declined.':err&&err.code==='rate_limited'?'Too many requests. Wait a moment and retry.':err&&err.code==='auth'?'Session expired. Sign in again.':'Something went wrong. Try again.'}
+  }finally{busy=false;ctrl=null;sendB.textContent='↑';msgs.scrollTop=msgs.scrollHeight}
+}
+function regen(){
+  if(busy)return;
+  if(hist.length&&hist[hist.length-1].role==='assistant')hist.pop();
+  var u=hist.pop();if(!u)return;
+  var rows=msgs.querySelectorAll('.row');if(rows.length>=2){rows[rows.length-1].remove();rows[rows.length-2].remove()}
+  go(u.content)}
+
+msgs.addEventListener('click',function(e){
+  var t=e.target,sg=t.closest('.sug button');
+  if(sg){go(sg.dataset.p);return}
+  if(t.classList.contains('cp')){copyText(t.closest('.cb').querySelector('code').textContent,function(){t.textContent='Copied';setTimeout(function(){t.textContent='Copy'},1200)})}
+  else if(t.dataset.a==='copy'){copyText(t.closest('.bub').dataset.raw||'',function(){t.textContent='Copied';setTimeout(function(){t.textContent='Copy'},1200)})}
+  else if(t.dataset.a==='regen'){regen()}});
+document.addEventListener('click',function(e){if(!e.target.closest('#mmenu,#modeBtn,#pmenu,#more'))closeMenus()});
+$('modeBtn').onclick=function(){$('pmenu').classList.remove('open');$('mmenu').classList.toggle('open')};
+$('more').onclick=function(){$('mmenu').classList.remove('open');$('pmenu').classList.toggle('open')};
+$('pm-new').onclick=newChat;
+$('pm-copy').onclick=function(){closeMenus();copyText(hist.map(function(m){return(m.role==='user'?'You: ':'AI: ')+m.content}).join('\n\n'),function(){toast('Conversation copied')})};
+$('pm-del').onclick=function(){if(cur){convs=convs.filter(function(x){return x.id!==cur.id});save()}newChat()};
+$('pm-home').onclick=function(){closeMenus();location.hash=''};
+
+var mode='up';
+function setTab(m){mode=m;$('t-in').classList.toggle('on',m==='in');$('t-up').classList.toggle('on',m==='up');$('pw2').style.display=m==='up'?'block':'none';$('email').style.display=SB?'block':'none';$('uname').style.display=(SB&&m==='in')?'none':'block';$('anote').textContent=SB?'Secured by Supabase.':'Accounts are stored on this device only.';$('enter').textContent=m==='in'?'Sign in':'Create account';$('pw').autocomplete=m==='in'?'current-password':'new-password';$('err').textContent=''}
+async function hash(p,salt){var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+':'+p));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
+async function submit(){
+  var u=$('uname').value.trim(),p=$('pw').value,k=u.toLowerCase(),db=ld('rh_users',{}),er=function(t){$('err').textContent=t};
+  if(SB){
+    var em=$('email').value.trim(),r;
+    if(!/^\S+@\S+\.\S+$/.test(em)){er('Enter a valid email.');return}
+    if(p.length<6){er('Password must be at least 6 characters.');return}
+    try{
+      if(mode==='up'){
+        if(u.length<3){er('Username must be at least 3 characters.');return}
+        if(p!==$('pw2').value){er('Passwords don’t match.');return}
+        r=await SB.auth.signUp({email:em,password:p,options:{data:{username:u}}});
+        if(r.error){er(r.error.message);return}
+        if(!r.data.session){toast('Check your email to confirm, then sign in.');setTab('in');return}
+      }else{
+        r=await SB.auth.signInWithPassword({email:em,password:p});
+        if(r.error){er(r.error.message);return}
+      }
+    }catch(e){er('Something went wrong. Try again.');return}
+    $('pw').value=$('pw2').value='';er('');var us=r.data.session.user;
+    setUser((us.user_metadata&&us.user_metadata.username)||us.email.split('@')[0],us.email);return}
+  if(u.length<3){er('Username must be at least 3 characters.');return}
+  if(p.length<6){er('Password must be at least 6 characters.');return}
+  try{
+    if(mode==='up'){
+      if(p!==$('pw2').value){er('Passwords don’t match.');return}
+      if(db[k]){er('This username is already taken on this device.');return}
+      var salt=Array.from(crypto.getRandomValues(new Uint8Array(8))).map(function(x){return x.toString(16).padStart(2,'0')}).join('');
+      db[k]={name:u,salt:salt,h:await hash(p,salt)};sv('rh_users',db);
+    }else{
+      var a=db[k];
+      if(!a||a.h!==await hash(p,a.salt)){er('Wrong username or password.');return}
+      u=a.name;
+    }
+  }catch(e){er('Something went wrong. Try again.');return}
+  $('pw').value=$('pw2').value='';$('err').textContent='';setUser(u);
+}
+$('t-in').onclick=function(){setTab('in')};$('t-up').onclick=function(){setTab('up')};
+$('enter').onclick=submit;
+['uname','pw','pw2'].forEach(function(i){$(i).addEventListener('keydown',function(e){if(e.key==='Enter')submit()})});
+$('logout').onclick=function(){openSb(false);if(SB)SB.auth.signOut();setUser(null);location.hash=''};
+$('openSb').onclick=function(){openSb(true)};$('closeSb').onclick=function(){openSb(false)};$('scrim').onclick=function(){openSb(false)};
+$('newchat').onclick=newChat;$('q').addEventListener('input',renderList);
+$('clr').onclick=function(){if(!convs.length)return;if(Date.now()-armed<3000){convs=[];save();newChat();armed=0}else{armed=Date.now();toast('Tap again to delete all history')}};
+['sub','set','up'].forEach(function(i){$(i).onclick=function(){toast('Coming soon')}});
+inp.addEventListener('input',function(){inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,140)+'px'});
+inp.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey&&window.innerWidth>760){e.preventDefault();if(!busy)go()}});
+sendB.onclick=function(){go()};
+window.addEventListener('hashchange',route);
+if(SB){SB.auth.getSession().then(function(r){var ss=r.data&&r.data.session;if(ss){var us=ss.user;setUser((us.user_metadata&&us.user_metadata.username)||us.email.split('@')[0],us.email)}else route()})}
+else if(user)setUser(user);else route();
+</script>
+</body>
+</html>
